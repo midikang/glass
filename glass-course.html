@@ -1,0 +1,2138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Glass Works - Interactive Course</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+    :root {
+      /* BACKGROUNDS */
+      --color-bg: #FAF7F2;
+      --color-bg-warm: #F5F0E8;
+      --color-bg-code: #1E1E2E;
+      --color-text: #2C2A28;
+      --color-text-secondary: #6B6560;
+      --color-text-muted: #9E9790;
+      --color-border: #E5DFD6;
+      --color-border-light: #EEEBE5;
+      --color-surface: #FFFFFF;
+      --color-surface-warm: #FDF9F3;
+
+      /* ACCENT */
+      --color-accent: #D94F30;
+      --color-accent-hover: #C4432A;
+      --color-accent-light: #FDEEE9;
+      --color-accent-muted: #E8836C;
+
+      /* SEMANTIC */
+      --color-success: #2D8B55;
+      --color-success-light: #E8F5EE;
+      --color-error: #C93B3B;
+      --color-error-light: #FDE8E8;
+      --color-info: #2A7B9B;
+      --color-info-light: #E4F2F7;
+
+      /* ACTOR COLORS */
+      --color-actor-1: #D94F30;
+      --color-actor-2: #2A7B9B;
+      --color-actor-3: #7B6DAA;
+      --color-actor-4: #D4A843;
+      --color-actor-5: #2D8B55;
+
+      /* FONTS */
+      --font-display: 'Bricolage Grotesque', Georgia, serif;
+      --font-body: 'DM Sans', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+
+      /* TYPE SCALE */
+      --text-xs: 0.75rem;
+      --text-sm: 0.875rem;
+      --text-base: 1rem;
+      --text-lg: 1.125rem;
+      --text-xl: 1.25rem;
+      --text-2xl: 1.5rem;
+      --text-3xl: 1.875rem;
+      --text-4xl: 2.25rem;
+      --text-5xl: 3rem;
+      --text-6xl: 3.75rem;
+
+      /* LINE HEIGHTS */
+      --leading-tight: 1.15;
+      --leading-snug: 1.3;
+      --leading-normal: 1.6;
+      --leading-loose: 1.8;
+
+      /* SPACING */
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --space-12: 3rem;
+      --space-16: 4rem;
+      --space-20: 5rem;
+      --space-24: 6rem;
+
+      --content-width: 800px;
+      --content-width-wide: 1000px;
+      --nav-height: 50px;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+
+      /* SHADOWS */
+      --shadow-sm: 0 1px 2px rgba(44, 42, 40, 0.05);
+      --shadow-md: 0 4px 12px rgba(44, 42, 40, 0.08);
+      --shadow-lg: 0 8px 24px rgba(44, 42, 40, 0.1);
+      --shadow-xl: 0 16px 48px rgba(44, 42, 40, 0.12);
+
+      /* ANIMATIONS */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --duration-fast: 150ms;
+      --duration-normal: 300ms;
+      --duration-slow: 500ms;
+      --stagger-delay: 120ms;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-snap-type: y proximity;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      line-height: var(--leading-normal);
+      color: var(--color-text);
+      background: var(--color-bg);
+      background-image: radial-gradient(
+        ellipse at 20% 50%,
+        rgba(217, 79, 48, 0.03) 0%,
+        transparent 50%
+      );
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background: var(--color-border);
+      border-radius: var(--radius-full);
+    }
+
+    /* NAVIGATION */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--nav-height);
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border-light);
+      z-index: 1000;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .progress-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: var(--color-accent);
+      width: 0%;
+      transition: width 0.2s ease-out;
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-6);
+    }
+
+    .nav-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: var(--text-lg);
+      color: var(--color-text);
+    }
+
+    .nav-dots {
+      display: flex;
+      gap: var(--space-3);
+    }
+
+    .nav-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid var(--color-text-muted);
+      background: transparent;
+      cursor: pointer;
+      transition: all var(--duration-fast);
+      position: relative;
+    }
+
+    .nav-dot:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--color-bg-code);
+      color: #CDD6F4;
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-sm);
+      font-size: var(--text-xs);
+      white-space: nowrap;
+      pointer-events: none;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .nav-dot.current {
+      border-color: var(--color-accent);
+      background: var(--color-accent);
+      box-shadow: 0 0 8px rgba(217, 79, 48, 0.3);
+    }
+
+    /* MODULE STRUCTURE */
+    .module {
+      min-height: 100vh;
+      min-height: 100dvh;
+      scroll-snap-align: start;
+      padding: var(--space-16) var(--space-6);
+      padding-top: calc(var(--nav-height) + var(--space-12));
+    }
+
+    .module-content {
+      max-width: var(--content-width);
+      margin: 0 auto;
+    }
+
+    .module-header {
+      margin-bottom: var(--space-12);
+    }
+
+    .module-number {
+      font-family: var(--font-display);
+      font-size: var(--text-6xl);
+      font-weight: 800;
+      color: var(--color-accent);
+      opacity: 0.15;
+      line-height: var(--leading-tight);
+      display: block;
+    }
+
+    .module-title {
+      font-family: var(--font-display);
+      font-size: var(--text-4xl);
+      font-weight: 700;
+      line-height: var(--leading-tight);
+      margin: var(--space-4) 0;
+    }
+
+    .module-subtitle {
+      font-size: var(--text-lg);
+      color: var(--color-text-secondary);
+      line-height: var(--leading-snug);
+    }
+
+    .screen {
+      margin-bottom: var(--space-12);
+    }
+
+    .screen-heading {
+      font-family: var(--font-display);
+      font-size: var(--text-2xl);
+      font-weight: 600;
+      margin-bottom: var(--space-6);
+    }
+
+    .screen p {
+      margin-bottom: var(--space-4);
+      max-width: 65ch;
+    }
+
+    /* ANIMATIONS */
+    .animate-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity var(--duration-slow) var(--ease-out),
+                  transform var(--duration-slow) var(--ease-out);
+    }
+
+    .animate-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .stagger-children > .animate-in {
+      transition-delay: calc(var(--stagger-index, 0) * var(--stagger-delay));
+    }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* GLOSSARY TOOLTIPS */
+    .term {
+      border-bottom: 1.5px dashed var(--color-accent-muted);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .term:hover, .term.active {
+      border-bottom-color: var(--color-accent);
+      color: var(--color-accent);
+    }
+
+    .term-tooltip {
+      position: fixed;
+      background: var(--color-bg-code);
+      color: #CDD6F4;
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius-sm);
+      font-size: var(--text-sm);
+      font-family: var(--font-body);
+      line-height: var(--leading-normal);
+      width: max(200px, min(320px, 80vw));
+      box-shadow: var(--shadow-lg);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity var(--duration-fast);
+      z-index: 10000;
+    }
+
+    .term-tooltip.visible {
+      opacity: 1;
+    }
+
+    .term-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: var(--color-bg-code);
+    }
+
+    .term-tooltip.flip {
+      bottom: auto;
+    }
+
+    .term-tooltip.flip::after {
+      top: auto;
+      bottom: 100%;
+      border-top-color: transparent;
+      border-bottom-color: var(--color-bg-code);
+    }
+
+    /* CODE TRANSLATION BLOCKS */
+    .translation-block {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      margin: var(--space-8) 0;
+    }
+
+    .translation-code {
+      background: var(--color-bg-code);
+      color: #CDD6F4;
+      padding: var(--space-6);
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      line-height: 1.7;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .translation-code pre,
+    .translation-code code {
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-x: hidden;
+    }
+
+    .translation-english {
+      background: var(--color-surface-warm);
+      padding: var(--space-6);
+      font-size: var(--text-sm);
+      line-height: 1.7;
+      border-left: 3px solid var(--color-accent);
+    }
+
+    .translation-label {
+      position: absolute;
+      top: var(--space-2);
+      right: var(--space-3);
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      opacity: 0.5;
+      font-family: var(--font-mono);
+    }
+
+    .translation-english .translation-label {
+      color: var(--color-text-muted);
+    }
+
+    .tl {
+      margin: var(--space-2) 0;
+    }
+
+    /* Syntax highlighting */
+    .code-keyword { color: #CBA6F7; }
+    .code-string { color: #A6E3A1; }
+    .code-function { color: #89B4FA; }
+    .code-comment { color: #6C7086; }
+    .code-number { color: #FAB387; }
+    .code-property { color: #F9E2AF; }
+    .code-operator { color: #94E2D5; }
+
+    /* CALLOUT BOXES */
+    .callout {
+      display: flex;
+      gap: var(--space-4);
+      padding: var(--space-5) var(--space-6);
+      border-radius: var(--radius-md);
+      margin: var(--space-8) 0;
+      border-left: 4px solid var(--color-accent);
+      background: var(--color-accent-light);
+    }
+
+    .callout-icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .callout-title {
+      display: block;
+      margin-bottom: var(--space-2);
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .callout p {
+      margin: 0;
+      color: var(--color-text-secondary);
+    }
+
+    .callout-info {
+      border-left-color: var(--color-info);
+      background: var(--color-info-light);
+    }
+
+    /* PATTERN CARDS */
+    .pattern-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: var(--space-4);
+      margin: var(--space-8) 0;
+    }
+
+    .pattern-card {
+      background: var(--color-surface);
+      border-radius: var(--radius-md);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-sm);
+      transition: transform var(--duration-normal) var(--ease-out), box-shadow var(--duration-normal);
+      border-top: 3px solid var(--color-accent);
+    }
+
+    .pattern-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .pattern-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      margin-bottom: var(--space-3);
+    }
+
+    .pattern-title {
+      font-family: var(--font-display);
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+
+    .pattern-desc {
+      font-size: var(--text-sm);
+      color: var(--color-text-secondary);
+      line-height: var(--leading-normal);
+    }
+
+    /* ICON ROWS */
+    .icon-rows {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      margin: var(--space-8) 0;
+    }
+
+    .icon-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      padding: var(--space-4);
+      background: var(--color-surface);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .icon-row p {
+      margin: 0;
+      color: var(--color-text-secondary);
+      font-size: var(--text-sm);
+    }
+
+    .icon-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    /* FLOW STEPS */
+    .flow-steps {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      margin: var(--space-8) 0;
+      flex-wrap: wrap;
+    }
+
+    .flow-step {
+      flex: 1;
+      min-width: 150px;
+      padding: var(--space-5);
+      background: var(--color-surface);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      text-align: center;
+    }
+
+    .flow-step-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--color-accent);
+      color: white;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      margin: 0 auto var(--space-3);
+    }
+
+    .flow-step p {
+      margin: 0;
+      font-size: var(--text-sm);
+    }
+
+    .flow-arrow {
+      color: var(--color-accent);
+      font-size: var(--text-3xl);
+      font-weight: 700;
+    }
+
+    /* QUIZZES */
+    .quiz-container {
+      margin: var(--space-8) 0;
+      padding: var(--space-6);
+      background: var(--color-surface-warm);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .quiz-question-block {
+      margin-bottom: var(--space-6);
+    }
+
+    .quiz-question {
+      font-family: var(--font-display);
+      font-weight: 600;
+      margin-bottom: var(--space-4);
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .quiz-option {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      background: var(--color-surface);
+      cursor: pointer;
+      width: 100%;
+      transition: border-color var(--duration-fast), background var(--duration-fast);
+      text-align: left;
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+    }
+
+    .quiz-option:hover {
+      border-color: var(--color-accent-muted);
+    }
+
+    .quiz-option.selected {
+      border-color: var(--color-accent);
+      background: var(--color-accent-light);
+    }
+
+    .quiz-option.correct {
+      border-color: var(--color-success);
+      background: var(--color-success-light);
+    }
+
+    .quiz-option.incorrect {
+      border-color: var(--color-error);
+      background: var(--color-error-light);
+    }
+
+    .quiz-option-radio {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--color-border);
+      transition: all var(--duration-fast);
+      flex-shrink: 0;
+    }
+
+    .quiz-option.selected .quiz-option-radio {
+      border-color: var(--color-accent);
+      background: var(--color-accent);
+      box-shadow: inset 0 0 0 3px white;
+    }
+
+    .quiz-feedback {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height var(--duration-normal), opacity var(--duration-normal);
+      margin-top: var(--space-2);
+    }
+
+    .quiz-feedback.show {
+      max-height: 200px;
+      opacity: 1;
+      padding: var(--space-3);
+      border-radius: var(--radius-sm);
+    }
+
+    .quiz-feedback.success {
+      background: var(--color-success-light);
+      color: var(--color-success);
+    }
+
+    .quiz-feedback.error {
+      background: var(--color-error-light);
+      color: var(--color-error);
+    }
+
+    .quiz-check-btn, .quiz-reset-btn {
+      padding: var(--space-3) var(--space-6);
+      background: var(--color-accent);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--duration-fast);
+      margin-right: var(--space-3);
+      margin-top: var(--space-4);
+    }
+
+    .quiz-check-btn:hover {
+      background: var(--color-accent-hover);
+    }
+
+    .quiz-reset-btn {
+      background: var(--color-text-muted);
+    }
+
+    /* GROUP CHAT */
+    .chat-window {
+      margin: var(--space-8) 0;
+      padding: var(--space-6);
+      background: var(--color-surface);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+    }
+
+    .chat-messages {
+      min-height: 300px;
+      max-height: 500px;
+      overflow-y: auto;
+      margin-bottom: var(--space-4);
+    }
+
+    .chat-message {
+      display: flex;
+      gap: var(--space-3);
+      margin-bottom: var(--space-4);
+      align-items: flex-start;
+    }
+
+    .chat-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: var(--text-sm);
+      flex-shrink: 0;
+    }
+
+    .chat-bubble {
+      flex: 1;
+      background: var(--color-bg-warm);
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius-md);
+    }
+
+    .chat-sender {
+      font-weight: 600;
+      font-size: var(--text-sm);
+      display: block;
+      margin-bottom: var(--space-1);
+    }
+
+    .chat-bubble p {
+      margin: 0;
+      font-size: var(--text-sm);
+    }
+
+    .chat-typing {
+      display: flex;
+      gap: var(--space-3);
+      align-items: center;
+      margin-bottom: var(--space-4);
+    }
+
+    .chat-typing-dots {
+      display: flex;
+      gap: var(--space-1);
+      padding: var(--space-3) var(--space-4);
+      background: var(--color-bg-warm);
+      border-radius: var(--radius-md);
+    }
+
+    .typing-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--color-text-muted);
+      animation: typingBounce 1.4s infinite;
+    }
+
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-6px); }
+    }
+
+    .chat-controls {
+      display: flex;
+      gap: var(--space-3);
+      align-items: center;
+    }
+
+    .chat-controls button {
+      padding: var(--space-2) var(--space-4);
+      background: var(--color-accent);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      cursor: pointer;
+      transition: background var(--duration-fast);
+      font-size: var(--text-sm);
+    }
+
+    .chat-controls button:hover {
+      background: var(--color-accent-hover);
+    }
+
+    .chat-progress {
+      font-size: var(--text-sm);
+      color: var(--color-text-secondary);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      :root {
+        --text-4xl: 1.875rem;
+        --text-5xl: 2.25rem;
+        --text-6xl: 3rem;
+      }
+
+      .translation-block {
+        grid-template-columns: 1fr;
+      }
+
+      .translation-english {
+        border-left: none;
+        border-top: 3px solid var(--color-accent);
+      }
+
+      .pattern-cards {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .flow-steps {
+        flex-direction: column;
+      }
+
+      .flow-arrow {
+        transform: rotate(90deg);
+      }
+    }
+
+    @media (max-width: 480px) {
+      :root {
+        --text-4xl: 1.5rem;
+        --text-5xl: 1.875rem;
+        --text-6xl: 2.25rem;
+      }
+
+      .module {
+        padding: var(--space-8) var(--space-4);
+      }
+
+      .pattern-cards {
+        grid-template-columns: 1fr;
+      }
+    }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="progress-bar" role="progressbar" aria-valuenow="0"></div>
+  <div class="nav-inner">
+    <span class="nav-title">How Glass Works</span>
+    <div class="nav-dots">
+      <button class="nav-dot current" data-target="module-1" data-tooltip="What is Glass?" role="tab" aria-label="Module 1"></button>
+      <button class="nav-dot" data-target="module-2" data-tooltip="Meet the Actors" role="tab" aria-label="Module 2"></button>
+      <button class="nav-dot" data-target="module-3" data-tooltip="Data Flow" role="tab" aria-label="Module 3"></button>
+      <button class="nav-dot" data-target="module-4" data-tooltip="AI & External Services" role="tab" aria-label="Module 4"></button>
+      <button class="nav-dot" data-target="module-5" data-tooltip="Clever Patterns" role="tab" aria-label="Module 5"></button>
+      <button class="nav-dot" data-target="module-6" data-tooltip="The Big Picture" role="tab" aria-label="Module 6"></button>
+    </div>
+  </div>
+</nav>
+
+<!-- MODULE 1: WHAT IS GLASS -->
+<section class="module" id="module-1" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">01</span>
+      <h1 class="module-title">What is Glass?</h1>
+      <p class="module-subtitle">Your invisible AI assistant that sees and listens to everything you do</p>
+    </header>
+
+    <div class="module-body">
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The Product in 30 Seconds</h2>
+        <p><strong>Glass</strong> is a desktop app that lives on your computer like a silent assistant. It sees what's on your screen, listens to your audio (meetings, podcasts, conversations), and uses AI to help you understand and recall everything.</p>
+        
+        <p>Think of it like having a photographic memory—but one that understands context. You can ask it questions like <em>"What was that API endpoint mentioned in yesterday's standup?"</em> and it knows the answer because it was listening.</p>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top-color: var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">👀</div>
+            <h4 class="pattern-title">Sees Your Screen</h4>
+            <p class="pattern-desc">Captures screenshots to understand what you're doing—like taking notes on what you're working on.</p>
+          </div>
+          
+          <div class="pattern-card" style="border-top-color: var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">🎧</div>
+            <h4 class="pattern-title">Listens to Audio</h4>
+            <p class="pattern-desc">Records and transcribes meetings, videos, and conversations in real-time—like having a note-taker in every meeting.</p>
+          </div>
+          
+          <div class="pattern-card" style="border-top-color: var(--color-actor-3)">
+            <div class="pattern-icon" style="background: var(--color-actor-3)">🤖</div>
+            <h4 class="pattern-title">AI-Powered Recall</h4>
+            <p class="pattern-desc">Ask questions based on everything it's seen and heard—like searching your entire work history with natural language.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">A Real User Journey: The Meeting Scenario</h2>
+        <p>Let's trace what happens when you join a meeting and then ask Glass a question later. This journey will be our map for understanding the code.</p>
+
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-step-num">1</div>
+            <p><strong>You join a meeting</strong><br>Glass starts recording audio automatically</p>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-step-num">2</div>
+            <p><strong>Real-time transcription</strong><br>Speech gets converted to text as people talk</p>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-step-num">3</div>
+            <p><strong>Stored locally</strong><br>All transcripts and screenshots saved to your computer</p>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-step-num">4</div>
+            <p><strong>You ask a question</strong><br>Glass searches everything and uses AI to answer</p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">Key Insight: Privacy by Design</strong>
+            <p>Glass is built to be <span class="term" data-definition="A local-first architecture means data is stored on your computer, not sent to the cloud. You control what gets uploaded (if anything).">local-first</span>. Your data stays on your machine unless you explicitly sign in to save it to the cloud. This is rare in AI apps—most send everything to their servers.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The Two Main Features</h2>
+        
+        <div class="icon-rows">
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-1)">🎯</div>
+            <div>
+              <strong>Ask: Context-Aware AI Chat</strong>
+              <p>Like ChatGPT, but it sees your screen and knows what you've been doing. You can ask "What's the bug on line 42?" and it sees the code you're looking at.</p>
+            </div>
+          </div>
+
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-2)">🎙️</div>
+            <div>
+              <strong>Listen: Meeting Intelligence</strong>
+              <p>Records audio, transcribes it in real-time, generates summaries, and lets you search everything said. Like Otter.ai built into your desktop.</p>
+            </div>
+          </div>
+        </div>
+
+        <p>Both features work together. If you're in a meeting (Listen mode) and want to ask a question about what was just said, you can switch to Ask mode and it has full context from the transcript.</p>
+      </section>
+    </div>
+  </div>
+</section>
+
+<!-- MODULE 2: MEET THE ACTORS -->
+<section class="module" id="module-2" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">02</span>
+      <h1 class="module-title">Meet the Main Actors</h1>
+      <p class="module-subtitle">The key components that make Glass work</p>
+    </header>
+
+    <div class="module-body">
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Think of Glass Like a Theater Production</h2>
+        <p>Instead of classes and functions, think of the code as <strong>actors</strong>—each with a specific job. When you click "Listen" or "Ask," these actors work together like a choreographed performance.</p>
+
+        <p>Let's meet the cast:</p>
+
+        <div class="icon-rows stagger-children">
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-1)">⚡</div>
+            <div>
+              <strong>Main Process (index.js)</strong>
+              <p>The director—manages the whole show. Starts the app, creates windows, handles authentication, and coordinates all the other actors. Like a conductor keeping everyone in sync.</p>
+            </div>
+          </div>
+
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-2)">🪟</div>
+            <div>
+              <strong>Window Manager</strong>
+              <p>The stage designer—controls what windows appear on screen (Ask, Listen, Settings) and where they're positioned. Think of it like managing multiple screens in a presentation.</p>
+            </div>
+          </div>
+
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-3)">🎙️</div>
+            <div>
+              <strong>Listen Service</strong>
+              <p>The audio engineer—captures audio from your mic and system sound, coordinates transcription, and generates meeting summaries. It's the brains behind the "Listen" feature.</p>
+            </div>
+          </div>
+
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-4)">💬</div>
+            <div>
+              <strong>Ask Service</strong>
+              <p>The conversation manager—handles your AI chat, captures screenshots, sends everything to AI providers (OpenAI, Claude, etc.), and streams responses back to you.</p>
+            </div>
+          </div>
+
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-5)">🗄️</div>
+            <div>
+              <strong>Database (SQLite or Firebase)</strong>
+              <p>The memory vault—stores all your transcripts, chat history, session data, and settings. SQLite keeps it local; Firebase syncs to the cloud.</p>
+            </div>
+          </div>
+
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-info)">🌐</div>
+            <div>
+              <strong>Web Frontend (Next.js)</strong>
+              <p>The costume department—renders the UI you see. Built with Next.js and served inside the Electron app, so it looks like a website but runs locally.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Why This Architecture?</h2>
+        <p>Glass uses <span class="term" data-definition="Electron is a framework that lets you build desktop apps using web technologies (HTML, CSS, JavaScript). Apps like VS Code, Slack, and Discord are built with Electron.">Electron</span>, which means it's a web app disguised as a desktop app. This gives you the best of both worlds:</p>
+
+        <div class="pattern-cards">
+          <div class="pattern-card">
+            <div class="pattern-icon" style="background: var(--color-success)">🚀</div>
+            <h4 class="pattern-title">Desktop Superpowers</h4>
+            <p class="pattern-desc">Access to screen capture, audio recording, and local files—things websites can't do.</p>
+          </div>
+
+          <div class="pattern-card">
+            <div class="pattern-icon" style="background: var(--color-info)">🎨</div>
+            <h4 class="pattern-title">Modern UI</h4>
+            <p class="pattern-desc">Built with React and Tailwind, so it's fast to develop and looks great.</p>
+          </div>
+
+          <div class="pattern-card">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">🔌</div>
+            <h4 class="pattern-title">Cross-Platform</h4>
+            <p class="pattern-desc">Works on macOS, Windows, and Linux with mostly the same code.</p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">Pattern: Separation of Concerns</strong>
+            <p>Each actor has one job. The Listen Service doesn't care about windows. The Window Manager doesn't care about audio. This makes the code easier to debug—if transcription breaks, you know exactly where to look.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">How They Talk to Each Other</h2>
+        <p>Actors can't just call each other directly (that would create a tangled mess). Instead, they communicate through <strong>bridges</strong> and <strong>events</strong>—like passing notes instead of shouting across a room.</p>
+
+        <div class="translation-block">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-comment">// From listenService.js</span>
+<span class="code-keyword">const</span> internalBridge = <span class="code-function">require</span>(<span class="code-string">'../../bridge/internalBridge'</span>);
+
+internalBridge.<span class="code-function">emit</span>(<span class="code-string">'window:requestVisibility'</span>, {
+  <span class="code-property">name</span>: <span class="code-string">'listen'</span>,
+  <span class="code-property">visible</span>: <span class="code-keyword">true</span>
+});</code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Import the communication system that lets different parts of the app talk...</p>
+              <p class="tl">Send a message on the "window visibility" channel saying "hey, I need the Listen window to appear"...</p>
+              <p class="tl">Specify which window (the Listen window) and what to do with it (make it visible).</p>
+            </div>
+          </div>
+        </div>
+
+        <p>The Window Manager is listening for that message. When it arrives, it shows the Listen window. Neither service needs to know the other exists—they just send and receive messages through the bridge.</p>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Test Your Understanding</h2>
+        
+        <div class="quiz-container">
+          <div class="quiz-question-block" data-question="q1" data-correct="option-b">
+            <h3 class="quiz-question">You want to add a "Save Session" button to the Listen window. Which actor would you modify?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>The Main Process (index.js) — it manages everything</span>
+              </button>
+              <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>The Listen Service — it handles Listen-related logic</span>
+              </button>
+              <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>The Window Manager — it controls the Listen window</span>
+              </button>
+            </div>
+            <div class="quiz-feedback" id="q1-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('module-2')">Check Answer</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('module-2')" style="display:none">Try Again</button>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<!-- MODULE 3: DATA FLOW -->
+<section class="module" id="module-3" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">03</span>
+      <h1 class="module-title">How Data Flows Through Glass</h1>
+      <p class="module-subtitle">Tracing the journey from your mic to AI and back</p>
+    </header>
+
+    <div class="module-body">
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Let's Follow a Recording Session</h2>
+        <p>You click "Listen." What happens next? Let's trace the data flow step by step—from your microphone all the way to a saved transcript in the database.</p>
+
+        <p>Think of it like a relay race where data gets passed from runner to runner, with each one transforming it slightly.</p>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The Data Flow Animation</h2>
+        
+        <div class="chat-window">
+          <div class="chat-messages" id="chat-messages-flow">
+            <div class="chat-message" data-msg="0" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">UI</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-1)">Frontend (React)</span>
+                <p>User clicked "Listen" button. Sending request to backend...</p>
+              </div>
+            </div>
+
+            <div class="chat-message" data-msg="1" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">LS</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-2)">Listen Service</span>
+                <p>Got the request! Creating a new session in the database and starting audio capture...</p>
+              </div>
+            </div>
+
+            <div class="chat-message" data-msg="2" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-5)">DB</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-5)">Database</span>
+                <p>New session created. ID: session_12345. Timestamp recorded.</p>
+              </div>
+            </div>
+
+            <div class="chat-message" data-msg="3" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-3)">🎧</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-3)">Audio Capture</span>
+                <p>Listening to microphone and system audio... capturing audio chunks every few seconds.</p>
+              </div>
+            </div>
+
+            <div class="chat-message" data-msg="4" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-4)">STT</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-4)">STT Service (Speech-to-Text)</span>
+                <p>Received audio chunk. Sending to Deepgram API... Got back: "Let's discuss the database schema."</p>
+              </div>
+            </div>
+
+            <div class="chat-message" data-msg="5" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-5)">DB</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-5)">Database</span>
+                <p>Transcript saved. Linked to session_12345. Ready for AI to search later.</p>
+              </div>
+            </div>
+
+            <div class="chat-message" data-msg="6" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">UI</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-1)">Frontend</span>
+                <p>Displaying transcript in real-time: "Let's discuss the database schema."</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-typing" id="chat-typing-flow" style="display:none">
+            <div class="chat-avatar" id="typing-avatar-flow">?</div>
+            <div class="chat-typing-dots">
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+            </div>
+          </div>
+
+          <div class="chat-controls">
+            <button onclick="playChatNextFlow()">Next Message</button>
+            <button onclick="playChatAllFlow()">Play All</button>
+            <button onclick="resetChatFlow()">Replay</button>
+            <span class="chat-progress" id="chat-progress-flow">0 / 7 messages</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The Code Behind the Magic</h2>
+        <p>When you click "Listen," here's what the code does:</p>
+
+        <div class="translation-block">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-comment">// From listenService.js - initializeSession()</span>
+<span class="code-keyword">async</span> <span class="code-function">initializeSession</span>() {
+  <span class="code-keyword">this</span>.currentSessionId = <span class="code-keyword">await</span> sessionRepository.<span class="code-function">create</span>(<span class="code-string">'listen'</span>);
+  
+  <span class="code-keyword">await this</span>.sttService.<span class="code-function">startTranscription</span>(<span class="code-keyword">this</span>.currentSessionId);
+  <span class="code-keyword">await this</span>.summaryService.<span class="code-function">initialize</span>(<span class="code-keyword">this</span>.currentSessionId);
+}</code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Create a new session in the database and remember its ID (like starting a new notebook and labeling it)...</p>
+              <p class="tl">Tell the speech-to-text service to start listening and transcribing audio for this session...</p>
+              <p class="tl">Initialize the summary service so it can generate meeting notes when we're done.</p>
+            </div>
+          </div>
+        </div>
+
+        <p>Notice how clean this is. The Listen Service doesn't know <em>how</em> transcription works—it just says "start transcribing." The STT Service handles all the messy audio processing details.</p>
+
+        <div class="callout">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">Pattern: Delegation</strong>
+            <p>Each service delegates to specialists. The Listen Service doesn't process audio itself—it delegates to STT Service. This is like a project manager who assigns tasks to experts instead of doing everything themselves. If transcription breaks, you debug STT Service, not the whole Listen flow.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Where Does the Data Live?</h2>
+        <p>Glass supports two storage modes:</p>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top-color: var(--color-success)">
+            <div class="pattern-icon" style="background: var(--color-success)">💾</div>
+            <h4 class="pattern-title">Local (SQLite)</h4>
+            <p class="pattern-desc">Data stays on your computer in a <span class="term" data-definition="SQLite is a lightweight database that stores everything in a single file. Apps like Apple Mail and Firefox use SQLite for local storage.">SQLite</span> database file. Fast, private, works offline. No account needed.</p>
+          </div>
+
+          <div class="pattern-card" style="border-top-color: var(--color-info)">
+            <div class="pattern-icon" style="background: var(--color-info)">☁️</div>
+            <h4 class="pattern-title">Cloud (Firebase)</h4>
+            <p class="pattern-desc">Data syncs to <span class="term" data-definition="Firebase is Google's cloud platform for apps. It provides databases, authentication, and file storage.">Firebase</span> when you sign in. Syncs across devices, backed up automatically. Requires a Pickle account.</p>
+          </div>
+        </div>
+
+        <p>The clever part? The code doesn't care which one you use. There's an <strong>adapter pattern</strong> that swaps between SQLite and Firebase without changing the rest of the app.</p>
+
+        <div class="translation-block">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-comment">// From askRepository (repositories/index.js)</span>
+<span class="code-keyword">const</span> currentStorage = authService.<span class="code-function">getStorageMode</span>();
+
+<span class="code-keyword">if</span> (currentStorage === <span class="code-string">'firebase'</span>) {
+  <span class="code-keyword">return</span> firebaseRepo.<span class="code-function">getAllAiMessagesBySessionId</span>(sessionId);
+} <span class="code-keyword">else</span> {
+  <span class="code-keyword">return</span> sqliteRepo.<span class="code-function">getAllAiMessagesBySessionId</span>(sessionId);
+}</code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Check which storage mode the user is in (local or cloud)...</p>
+              <p class="tl">If they're using Firebase (cloud), fetch data from Firebase...</p>
+              <p class="tl">Otherwise, fetch from the local SQLite database. Either way, return the same data format.</p>
+            </div>
+          </div>
+        </div>
+
+        <p>This means you can switch from local to cloud (or vice versa) without rewriting any code. The Ask Service doesn't care where data comes from—it just asks the repository and gets an answer.</p>
+      </section>
+    </div>
+  </div>
+</section>
+
+<!-- MODULE 4: AI & EXTERNAL SERVICES -->
+<section class="module" id="module-4" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">04</span>
+      <h1 class="module-title">AI Providers & External Services</h1>
+      <p class="module-subtitle">How Glass talks to OpenAI, Claude, Gemini, and more</p>
+    </header>
+
+    <div class="module-body">
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The AI Provider Zoo</h2>
+        <p>Glass doesn't have its own AI model. Instead, it connects to external AI services—like how a calculator app doesn't do math itself, it uses the phone's processor.</p>
+
+        <p>Here are all the AI providers Glass supports:</p>
+
+        <div class="icon-rows stagger-children">
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: #10A37F">🤖</div>
+            <div>
+              <strong>OpenAI (GPT-4, GPT-4o)</strong>
+              <p>For chat responses. The default for most users.</p>
+            </div>
+          </div>
+
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: #C1A87D">🧠</div>
+            <div>
+              <strong>Anthropic Claude</strong>
+              <p>Alternative to OpenAI. Known for longer context windows (remembers more history).</p>
+            </div>
+          </div>
+
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: #4285F4">✨</div>
+            <div>
+              <strong>Google Gemini</strong>
+              <p>Google's AI model. Good for vision tasks (analyzing screenshots).</p>
+            </div>
+          </div>
+
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: #FF6B6B">🦙</div>
+            <div>
+              <strong>Ollama (Local AI)</strong>
+              <p>Runs AI models on your own computer—no API key needed, completely private.</p>
+            </div>
+          </div>
+
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-info)">🎙️</div>
+            <div>
+              <strong>Deepgram & Whisper (Speech-to-Text)</strong>
+              <p>Converts audio to text. Deepgram is cloud-based; Whisper runs locally.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The Factory Pattern: Swapping Providers</h2>
+        <p>Glass uses a <strong>factory</strong> to create the right AI provider based on your settings. Like ordering from a restaurant menu—you say "burger" and the kitchen figures out how to make it.</p>
+
+        <div class="translation-block">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-comment">// From ai/factory.js - createStreamingLLM()</span>
+<span class="code-keyword">function</span> <span class="code-function">createStreamingLLM</span>(provider) {
+  <span class="code-keyword">switch</span> (provider) {
+    <span class="code-keyword">case</span> <span class="code-string">'openai'</span>:
+      <span class="code-keyword">return new</span> <span class="code-function">OpenAIProvider</span>();
+    <span class="code-keyword">case</span> <span class="code-string">'anthropic'</span>:
+      <span class="code-keyword">return new</span> <span class="code-function">AnthropicProvider</span>();
+    <span class="code-keyword">case</span> <span class="code-string">'gemini'</span>:
+      <span class="code-keyword">return new</span> <span class="code-function">GeminiProvider</span>();
+    <span class="code-keyword">case</span> <span class="code-string">'ollama'</span>:
+      <span class="code-keyword">return new</span> <span class="code-function">OllamaProvider</span>();
+  }
+}</code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Define a function that creates the right AI provider based on a name...</p>
+              <p class="tl">If the user wants OpenAI, create an OpenAI connection...</p>
+              <p class="tl">If they want Claude (Anthropic), create that instead...</p>
+              <p class="tl">Same for Gemini and Ollama. Return whichever provider was requested.</p>
+            </div>
+          </div>
+        </div>
+
+        <p>Now the Ask Service can just call <code>createStreamingLLM('openai')</code> and not care about API keys, URL endpoints, or request formatting—the factory handles all that.</p>
+
+        <div class="callout">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">Pattern: Abstraction</strong>
+            <p>The Ask Service doesn't know how to talk to OpenAI vs Claude—it just knows "send this message, get a response." Each provider handles the messy details (API keys, rate limits, error formats). This means adding a new AI provider (say, <span class="term" data-definition="Perplexity is an AI search engine that combines web search with language models.">Perplexity</span>) only requires writing one new file, not changing the entire app.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Streaming Responses</h2>
+        <p>When you ask Glass a question, you don't wait 30 seconds for a full response—you see words appear one by one, like typing. This is called <strong>streaming</strong>.</p>
+
+        <p>Here's how it works:</p>
+
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-step-num">1</div>
+            <p><strong>Send question to AI</strong><br>Glass sends your message + context to OpenAI</p>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-step-num">2</div>
+            <p><strong>AI streams back chunks</strong><br>OpenAI sends "The..." then "answer..." then "is..."</p>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-step-num">3</div>
+            <p><strong>Display as they arrive</strong><br>Each chunk gets appended to your screen immediately</p>
+          </div>
+        </div>
+
+        <div class="translation-block">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-comment">// From openai.js - stream()</span>
+<span class="code-keyword">const</span> stream = <span class="code-keyword">await</span> openai.chat.completions.<span class="code-function">create</span>({
+  <span class="code-property">model</span>: <span class="code-string">'gpt-4o'</span>,
+  <span class="code-property">messages</span>: messages,
+  <span class="code-property">stream</span>: <span class="code-keyword">true</span>
+});
+
+<span class="code-keyword">for await</span> (<span class="code-keyword">const</span> chunk <span class="code-keyword">of</span> stream) {
+  <span class="code-keyword">const</span> text = chunk.choices[<span class="code-number">0</span>].delta.content || <span class="code-string">''</span>;
+  <span class="code-function">onChunk</span>(text);
+}</code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Ask OpenAI for a response, but tell it to stream results back instead of waiting for the full answer...</p>
+              <p class="tl">Loop through each chunk that arrives (like checking your mailbox repeatedly for new letters)...</p>
+              <p class="tl">Extract the text from each chunk and immediately send it to the UI to display.</p>
+            </div>
+          </div>
+        </div>
+
+        <p>This makes the app feel instant. Instead of a loading spinner, users see progress immediately.</p>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Test Your Understanding</h2>
+        
+        <div class="quiz-container">
+          <div class="quiz-question-block" data-question="q2" data-correct="option-c">
+            <h3 class="quiz-question">A user reports that Glass isn't connecting to OpenAI, but Claude works fine. Where would you look first?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>The Ask Service—it handles all AI requests</span>
+              </button>
+              <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>The Factory—it might be creating the wrong provider</span>
+              </button>
+              <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>The OpenAI Provider file—it's provider-specific, so the issue is likely in OpenAI's implementation</span>
+              </button>
+            </div>
+            <div class="quiz-feedback" id="q2-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('module-4')">Check Answer</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('module-4')" style="display:none">Try Again</button>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<!-- MODULE 5: CLEVER PATTERNS -->
+<section class="module" id="module-5" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">05</span>
+      <h1 class="module-title">Clever Engineering Patterns</h1>
+      <p class="module-subtitle">The tricks that make Glass fast, reliable, and maintainable</p>
+    </header>
+
+    <div class="module-body">
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Patterns You Can Steal</h2>
+        <p>These are the engineering decisions that make Glass work well—and they're patterns you can request from AI when building your own apps.</p>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Pattern 1: Repository Pattern (Swap Storage Backends)</h2>
+        <p>Instead of scattering database calls everywhere, Glass uses <strong>repositories</strong>—a single place for all data operations for each feature.</p>
+
+        <p>Think of it like a librarian. You don't walk into the library and start pulling books off shelves yourself. You ask the librarian, and they know exactly where everything is.</p>
+
+        <div class="translation-block">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-comment">// From ask/repositories/index.js</span>
+<span class="code-keyword">const</span> sqliteRepo = <span class="code-function">require</span>(<span class="code-string">'./sqlite.repository'</span>);
+<span class="code-keyword">const</span> firebaseRepo = <span class="code-function">require</span>(<span class="code-string">'./firebase.repository'</span>);
+<span class="code-keyword">const</span> authService = <span class="code-function">require</span>(<span class="code-string">'../../common/services/authService'</span>);
+
+<span class="code-keyword">module</span>.exports = {
+  <span class="code-function">getAllAiMessagesBySessionId</span>(sessionId) {
+    <span class="code-keyword">const</span> mode = authService.<span class="code-function">getStorageMode</span>();
+    <span class="code-keyword">return</span> mode === <span class="code-string">'firebase'</span>
+      ? firebaseRepo.<span class="code-function">getAllAiMessagesBySessionId</span>(sessionId)
+      : sqliteRepo.<span class="code-function">getAllAiMessagesBySessionId</span>(sessionId);
+  }
+};</code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Load both the SQLite and Firebase implementations...</p>
+              <p class="tl">Check which storage mode the user is in...</p>
+              <p class="tl">Route the request to the right backend. The caller doesn't know or care which one is used—they just get data back.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div class="callout-icon">🎯</div>
+          <div class="callout-content">
+            <strong class="callout-title">When to Use This</strong>
+            <p>Use the repository pattern when you might switch databases later (SQLite → Postgres, Firebase → Supabase). It lets you swap the backend without rewriting your app. When talking to AI: <em>"Create a repository pattern for user data that supports both SQLite and Firebase."</em></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Pattern 2: Event Bridge (Decouple Components)</h2>
+        <p>Services communicate via an <strong>event bridge</strong>—a message bus where actors send and listen for events. Like a radio station: you broadcast a message, and anyone tuned to that channel hears it.</p>
+
+        <p>This prevents tight coupling. The Listen Service doesn't call the Window Manager directly—it just emits "I need the window visible" and the Window Manager picks it up.</p>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top-color: var(--color-success)">
+            <div class="pattern-icon" style="background: var(--color-success)">✅</div>
+            <h4 class="pattern-title">With Event Bridge</h4>
+            <p class="pattern-desc">Listen Service emits an event. Window Manager listens for it. They don't know about each other—easy to test and modify independently.</p>
+          </div>
+
+          <div class="pattern-card" style="border-top-color: var(--color-error)">
+            <div class="pattern-icon" style="background: var(--color-error)">❌</div>
+            <h4 class="pattern-title">Without Event Bridge</h4>
+            <p class="pattern-desc">Listen Service imports Window Manager and calls it directly. Now they're tangled—changing one might break the other.</p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div class="callout-icon">🎯</div>
+          <div class="callout-content">
+            <strong class="callout-title">When to Use This</strong>
+            <p>Use events when multiple parts of your app need to react to the same action. For example, when a user logs in, you might need to update the UI, fetch data, and log analytics—all at once. When talking to AI: <em>"Set up an event emitter to broadcast user login events."</em></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Pattern 3: Service Layer (Business Logic Isolation)</h2>
+        <p>The <strong>service layer</strong> is where all the "how do we actually do this?" logic lives. The UI doesn't process audio—it asks the Listen Service. The Listen Service doesn't know about buttons—it just exposes functions like <code>startRecording()</code>.</p>
+
+        <p>Think of it like a restaurant. The waiter (UI) takes your order and delivers food, but they don't cook. The kitchen (service layer) handles all the cooking. The waiter doesn't need to know how to make pasta—they just need to know how to order it.</p>
+
+        <div class="translation-block">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-comment">// UI calls this simple function:</span>
+<span class="code-keyword">await</span> listenService.<span class="code-function">initializeSession</span>();
+
+<span class="code-comment">// Behind the scenes, the service does:</span>
+<span class="code-keyword">async</span> <span class="code-function">initializeSession</span>() {
+  <span class="code-keyword">this</span>.currentSessionId = <span class="code-keyword">await</span> sessionRepo.<span class="code-function">create</span>(<span class="code-string">'listen'</span>);
+  <span class="code-keyword">await this</span>.sttService.<span class="code-function">startTranscription</span>(<span class="code-keyword">this</span>.currentSessionId);
+  <span class="code-keyword">await this</span>.summaryService.<span class="code-function">initialize</span>(<span class="code-keyword">this</span>.currentSessionId);
+}</code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">The UI just calls one function—it doesn't care about the steps...</p>
+              <p class="tl">The service handles all the orchestration: creating a session, starting transcription, initializing summaries...</p>
+              <p class="tl">If the UI needs to change (new button layout, mobile version), it doesn't affect the logic—it's all in the service.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div class="callout-icon">🎯</div>
+          <div class="callout-content">
+            <strong class="callout-title">When to Use This</strong>
+            <p>Always. Seriously—put your logic in services, not in UI components. UI should only handle display and user input. When talking to AI: <em>"Create a service layer for handling payments that the UI can call with simple functions."</em></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Pattern 4: Graceful Shutdown (Cleanup on Exit)</h2>
+        <p>When you quit Glass, it doesn't just close—it cleans up first. Audio stops recording, sessions get marked as ended, the database closes properly. This prevents corrupted data.</p>
+
+        <p>It's like leaving a campsite. You don't just walk away—you put out the fire, pack your tent, and leave no trace.</p>
+
+        <div class="translation-block">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-comment">// From index.js - before-quit event</span>
+app.<span class="code-function">on</span>(<span class="code-string">'before-quit'</span>, <span class="code-keyword">async</span> (event) => {
+  event.<span class="code-function">preventDefault</span>();
+  
+  <span class="code-keyword">await</span> listenService.<span class="code-function">closeSession</span>();
+  <span class="code-keyword">await</span> sessionRepository.<span class="code-function">endAllActiveSessions</span>();
+  <span class="code-keyword">await</span> ollamaService.<span class="code-function">shutdown</span>();
+  databaseInitializer.<span class="code-function">close</span>();
+  
+  app.<span class="code-function">exit</span>(<span class="code-number">0</span>);
+});</code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">When the app tries to quit, stop it temporarily...</p>
+              <p class="tl">Close any active recording session (stop audio capture)...</p>
+              <p class="tl">Mark all sessions in the database as ended...</p>
+              <p class="tl">Shut down the local AI service if running...</p>
+              <p class="tl">Close the database connection cleanly, then exit.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div class="callout-icon">🎯</div>
+          <div class="callout-content">
+            <strong class="callout-title">When to Use This</strong>
+            <p>Whenever your app writes to files or databases. If the user force-quits your app mid-save, you could lose data. Graceful shutdown ensures cleanup happens first. When talking to AI: <em>"Add a graceful shutdown handler that saves state before the app closes."</em></p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<!-- MODULE 6: THE BIG PICTURE -->
+<section class="module" id="module-6" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">06</span>
+      <h1 class="module-title">The Complete Architecture</h1>
+      <p class="module-subtitle">How all the pieces fit together</p>
+    </header>
+
+    <div class="module-body">
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The Full System Diagram</h2>
+        <p>Let's zoom out and see the entire architecture. Here's how Glass is structured from top to bottom:</p>
+
+        <div class="icon-rows stagger-children">
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-1)">🖥️</div>
+            <div>
+              <strong>Desktop Layer (Electron)</strong>
+              <p>The shell that runs everything—provides window management, screen capture, audio access, and local file system.</p>
+            </div>
+          </div>
+
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-2)">⚙️</div>
+            <div>
+              <strong>Main Process (Node.js)</strong>
+              <p>The backend that coordinates all services—Listen, Ask, Settings, Auth, Database. Runs in the background.</p>
+            </div>
+          </div>
+
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-3)">🌐</div>
+            <div>
+              <strong>Web Frontend (Next.js)</strong>
+              <p>The UI you see—built with React and Tailwind, served as a local website inside Electron.</p>
+            </div>
+          </div>
+
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-4)">🗄️</div>
+            <div>
+              <strong>Storage Layer (SQLite / Firebase)</strong>
+              <p>Where all data is stored—transcripts, chat history, sessions, settings. Swappable between local and cloud.</p>
+            </div>
+          </div>
+
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-5)">☁️</div>
+            <div>
+              <strong>External Services</strong>
+              <p>AI providers (OpenAI, Claude), speech-to-text (Deepgram), authentication (Firebase Auth). Glass talks to these via APIs.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">A Complete Request Flow</h2>
+        <p>Let's trace a real user action from start to finish: <strong>asking Glass a question while it's recording a meeting</strong>.</p>
+
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-step-num">1</div>
+            <p><strong>User types question in UI</strong><br>Frontend captures input</p>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-step-num">2</div>
+            <p><strong>Frontend sends to backend</strong><br>Via IPC (inter-process communication)</p>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-step-num">3</div>
+            <p><strong>Ask Service processes</strong><br>Captures screenshot, fetches recent transcripts from DB</p>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-step-num">4</div>
+            <p><strong>Builds context for AI</strong><br>Combines question + screenshot + transcripts</p>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-step-num">5</div>
+            <p><strong>Sends to OpenAI</strong><br>Streams response back chunk by chunk</p>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-step-num">6</div>
+            <p><strong>Display to user</strong><br>Each chunk appears in UI as it arrives</p>
+          </div>
+        </div>
+
+        <p>Notice how many layers are involved—but each layer only does one thing. The UI doesn't talk to OpenAI. The database doesn't know about screenshots. Everything is cleanly separated.</p>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Why This Architecture Works</h2>
+        
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top-color: var(--color-success)">
+            <div class="pattern-icon" style="background: var(--color-success)">🔧</div>
+            <h4 class="pattern-title">Easy to Debug</h4>
+            <p class="pattern-desc">If transcription fails, you know it's in the STT Service. If AI responses are slow, check the provider layer. Isolation makes bugs predictable.</p>
+          </div>
+
+          <div class="pattern-card" style="border-top-color: var(--color-info)">
+            <div class="pattern-icon" style="background: var(--color-info)">🚀</div>
+            <h4 class="pattern-title">Easy to Extend</h4>
+            <p class="pattern-desc">Want to add a new AI provider? Write one file. Want to support Postgres? Write one repository. The rest of the app doesn't change.</p>
+          </div>
+
+          <div class="pattern-card" style="border-top-color: var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">🧪</div>
+            <h4 class="pattern-title">Easy to Test</h4>
+            <p class="pattern-desc">Each service can be tested independently. You can test the Ask Service without opening windows. You can test the database without running the whole app.</p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">The Meta-Pattern: Modularity</strong>
+            <p>All the patterns we've seen (repository, service layer, event bridge, factory) have one thing in common: <strong>modularity</strong>. Each piece is independent. This is the single most important principle in software—keep things separate, and they're easier to understand, change, and fix.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">What You've Learned</h2>
+        <p>You now understand how Glass works at a level that lets you:</p>
+
+        <ul style="margin-left: var(--space-6); line-height: var(--leading-loose)">
+          <li><strong>Debug issues</strong>—you know which file to check based on the symptom</li>
+          <li><strong>Extend features</strong>—you can add a new AI provider, storage backend, or UI component</li>
+          <li><strong>Make architectural decisions</strong>—you understand tradeoffs between local vs cloud, streaming vs batch, services vs direct calls</li>
+          <li><strong>Talk to AI coding tools effectively</strong>—you can request specific patterns by name ("create a repository pattern," "set up an event bridge")</li>
+        </ul>
+
+        <p>Most importantly, you've learned how to <strong>read</strong> code architecture—not by memorizing every line, but by understanding the patterns and roles. This skill transfers to any codebase you encounter.</p>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Final Challenge: Apply What You've Learned</h2>
+        
+        <div class="quiz-container">
+          <div class="quiz-question-block" data-question="q3" data-correct="option-b">
+            <h3 class="quiz-question">You want to add a feature that automatically detects when you say "action item" in a meeting and highlights it. Which files would you need to modify?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Just the Listen Service—it handles all meeting features</span>
+              </button>
+              <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>STT Service (to detect the phrase), Summary Service (to highlight it), and the Frontend (to display highlights)</span>
+              </button>
+              <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>The database—add a new table for action items</span>
+              </button>
+            </div>
+            <div class="quiz-feedback" id="q3-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('module-6')">Check Answer</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('module-6')" style="display:none">Try Again</button>
+        </div>
+
+        <div class="callout callout-info" style="margin-top: var(--space-8)">
+          <div class="callout-icon">🎓</div>
+          <div class="callout-content">
+            <strong class="callout-title">You've Completed the Course!</strong>
+            <p>You went from "what is Glass?" to understanding its full architecture—main process, services, repositories, AI providers, data flow, and patterns. That's a huge leap. Now go build something, break something, fix something. The best way to internalize this is to get your hands dirty with the actual code.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<script>
+(function() {
+  'use strict';
+
+  // PROGRESS BAR
+  const progressBar = document.querySelector('.progress-bar');
+  function updateProgressBar() {
+    const scrollTop = window.scrollY;
+    const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = (scrollTop / scrollHeight) * 100;
+    progressBar.style.width = progress + '%';
+    progressBar.setAttribute('aria-valuenow', Math.round(progress));
+  }
+  window.addEventListener('scroll', () => {
+    requestAnimationFrame(updateProgressBar);
+  }, { passive: true });
+
+  // NAVIGATION DOTS
+  const modules = document.querySelectorAll('.module');
+  const dots = document.querySelectorAll('.nav-dot');
+
+  dots.forEach((dot, index) => {
+    dot.addEventListener('click', () => {
+      const targetModule = document.getElementById(dot.dataset.target);
+      if (targetModule) {
+        targetModule.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+
+  // Update current dot on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+        const index = Array.from(modules).indexOf(entry.target);
+        dots.forEach((d, i) => {
+          d.classList.toggle('current', i === index);
+        });
+      }
+    });
+  }, { threshold: [0.5] });
+
+  modules.forEach(module => observer.observe(module));
+
+  // SCROLL REVEAL ANIMATIONS
+  const animObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        animObserver.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -10% 0px', threshold: 0.1 });
+
+  document.querySelectorAll('.animate-in').forEach(el => animObserver.observe(el));
+
+  // Stagger children
+  document.querySelectorAll('.stagger-children').forEach(parent => {
+    Array.from(parent.children).forEach((child, i) => {
+      child.style.setProperty('--stagger-index', i);
+    });
+  });
+
+  // KEYBOARD NAVIGATION
+  document.addEventListener('keydown', (e) => {
+    if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
+    
+    const currentIndex = Array.from(modules).findIndex(m => {
+      const rect = m.getBoundingClientRect();
+      return rect.top >= 0 && rect.top < window.innerHeight / 2;
+    });
+
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+      if (currentIndex < modules.length - 1) {
+        modules[currentIndex + 1].scrollIntoView({ behavior: 'smooth' });
+        e.preventDefault();
+      }
+    }
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+      if (currentIndex > 0) {
+        modules[currentIndex - 1].scrollIntoView({ behavior: 'smooth' });
+        e.preventDefault();
+      }
+    }
+  });
+
+  // GLOSSARY TOOLTIPS
+  let activeTooltip = null;
+
+  function positionTooltip(term, tip) {
+    const rect = term.getBoundingClientRect();
+    const tipWidth = 320;
+    let left = rect.left + rect.width / 2 - tipWidth / 2;
+    left = Math.max(8, Math.min(left, window.innerWidth - tipWidth - 8));
+
+    document.body.appendChild(tip);
+    const tipHeight = tip.offsetHeight;
+    
+    if (rect.top - tipHeight - 8 < 0) {
+      tip.style.top = (rect.bottom + 8) + 'px';
+      tip.classList.add('flip');
+    } else {
+      tip.style.top = (rect.top - tipHeight - 8) + 'px';
+      tip.classList.remove('flip');
+    }
+    
+    tip.style.left = left + 'px';
+  }
+
+  document.querySelectorAll('.term').forEach(term => {
+    const tip = document.createElement('span');
+    tip.className = 'term-tooltip';
+    tip.textContent = term.dataset.definition;
+
+    term.addEventListener('mouseenter', () => {
+      if (activeTooltip && activeTooltip !== tip) {
+        activeTooltip.classList.remove('visible');
+        activeTooltip.remove();
+      }
+      positionTooltip(term, tip);
+      requestAnimationFrame(() => tip.classList.add('visible'));
+      activeTooltip = tip;
+    });
+
+    term.addEventListener('mouseleave', () => {
+      tip.classList.remove('visible');
+      setTimeout(() => { if (!tip.classList.contains('visible')) tip.remove(); }, 150);
+      activeTooltip = null;
+    });
+
+    term.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (activeTooltip && activeTooltip !== tip) {
+        activeTooltip.classList.remove('visible');
+        activeTooltip.remove();
+      }
+      if (tip.classList.contains('visible')) {
+        tip.classList.remove('visible');
+        tip.remove();
+        activeTooltip = null;
+      } else {
+        positionTooltip(term, tip);
+        requestAnimationFrame(() => tip.classList.add('visible'));
+        activeTooltip = tip;
+      }
+    });
+  });
+
+  document.addEventListener('click', () => {
+    if (activeTooltip) {
+      activeTooltip.classList.remove('visible');
+      activeTooltip.remove();
+      activeTooltip = null;
+    }
+  });
+
+  // QUIZ FUNCTIONS
+  window.selectOption = function(btn) {
+    const block = btn.closest('.quiz-question-block');
+    block.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+    btn.classList.add('selected');
+  };
+
+  window.checkQuiz = function(moduleId) {
+    const module = document.getElementById(moduleId);
+    const questions = module.querySelectorAll('.quiz-question-block');
+    let correct = 0;
+
+    questions.forEach(q => {
+      const selected = q.querySelector('.quiz-option.selected');
+      const feedback = q.querySelector('.quiz-feedback');
+      const correctValue = q.dataset.correct;
+
+      if (!selected) {
+        feedback.textContent = 'Pick an answer first!';
+        feedback.className = 'quiz-feedback show';
+        feedback.style.background = 'var(--color-info-light)';
+        feedback.style.color = 'var(--color-info)';
+        return;
+      }
+
+      const explanations = {
+        'q1': {
+          correct: 'Exactly! The Listen Service handles all meeting-related logic. The Window Manager just shows/hides windows—it doesn\'t care what\'s inside them. The Main Process coordinates things but doesn\'t implement feature logic.',
+          incorrect: 'Not quite. The Listen Service is responsible for all meeting features—recording, transcription, and session management. The Window Manager only controls window visibility, not feature logic.'
+        },
+        'q2': {
+          correct: 'Spot on! Since Claude works, the problem isn\'t in the Ask Service or Factory—those are shared across all providers. The issue must be in the OpenAI-specific code: likely an API key problem, endpoint configuration, or how OpenAI requests are formatted.',
+          incorrect: 'Think about what\'s different between providers. The Ask Service and Factory are the same for all AI providers. Only the provider-specific code (OpenAIProvider) differs. That\'s where the bug must be.'
+        },
+        'q3': {
+          correct: 'Perfect! You need to: (1) modify STT Service to detect "action item" during transcription, (2) update Summary Service to track and highlight these moments, and (3) change the Frontend to visually display highlights. This spans multiple layers because it affects detection, storage, and display.',
+          incorrect: 'Think about the full flow: detecting the phrase (STT), storing it as special (Summary), and showing it differently (Frontend). Each layer has a role. Just changing one part won\'t create the full feature.'
+        }
+      };
+
+      if (selected.dataset.value === correctValue) {
+        correct++;
+        selected.classList.add('correct');
+        const qId = q.dataset.question;
+        feedback.innerHTML = '<strong>Exactly!</strong> ' + (explanations[qId]?.correct || 'Correct!');
+        feedback.className = 'quiz-feedback show success';
+      } else {
+        selected.classList.add('incorrect');
+        q.querySelector(`[data-value="${correctValue}"]`).classList.add('correct');
+        const qId = q.dataset.question;
+        feedback.innerHTML = '<strong>Not quite.</strong> ' + (explanations[qId]?.incorrect || 'Try again!');
+        feedback.className = 'quiz-feedback show error';
+      }
+
+      q.querySelectorAll('.quiz-option').forEach(o => o.disabled = true);
+    });
+
+    const checkBtn = module.querySelector('.quiz-check-btn');
+    const resetBtn = module.querySelector('.quiz-reset-btn');
+    if (checkBtn) checkBtn.style.display = 'none';
+    if (resetBtn) resetBtn.style.display = 'inline-block';
+  };
+
+  window.resetQuiz = function(moduleId) {
+    const module = document.getElementById(moduleId);
+    const questions = module.querySelectorAll('.quiz-question-block');
+    
+    questions.forEach(q => {
+      q.querySelectorAll('.quiz-option').forEach(o => {
+        o.classList.remove('selected', 'correct', 'incorrect');
+        o.disabled = false;
+      });
+      q.querySelector('.quiz-feedback').className = 'quiz-feedback';
+    });
+
+    const checkBtn = module.querySelector('.quiz-check-btn');
+    const resetBtn = module.querySelector('.quiz-reset-btn');
+    if (checkBtn) checkBtn.style.display = 'inline-block';
+    if (resetBtn) resetBtn.style.display = 'none';
+  };
+
+  // GROUP CHAT ANIMATION (Module 3)
+  let chatIndexFlow = 0;
+  const chatMessagesFlow = document.querySelectorAll('#chat-messages-flow .chat-message');
+  const actors = {
+    'UI': { color: 'var(--color-actor-1)' },
+    'LS': { color: 'var(--color-actor-2)' },
+    'DB': { color: 'var(--color-actor-5)' },
+    '🎧': { color: 'var(--color-actor-3)' },
+    'STT': { color: 'var(--color-actor-4)' }
+  };
+
+  window.playChatNextFlow = function() {
+    if (chatIndexFlow >= chatMessagesFlow.length) return;
+    const msg = chatMessagesFlow[chatIndexFlow];
+    const avatar = msg.querySelector('.chat-avatar');
+    const avatarText = avatar.textContent;
+
+    const typing = document.getElementById('chat-typing-flow');
+    const typingAvatar = document.getElementById('typing-avatar-flow');
+    typingAvatar.textContent = avatarText;
+    typingAvatar.style.background = avatar.style.background;
+    typing.style.display = 'flex';
+
+    setTimeout(() => {
+      typing.style.display = 'none';
+      msg.style.display = 'flex';
+      msg.style.animation = 'fadeSlideUp 0.3s var(--ease-out)';
+      chatIndexFlow++;
+      document.getElementById('chat-progress-flow').textContent = `${chatIndexFlow} / ${chatMessagesFlow.length} messages`;
+      
+      const container = document.getElementById('chat-messages-flow');
+      container.scrollTop = container.scrollHeight;
+    }, 800);
+  };
+
+  window.playChatAllFlow = function() {
+    const interval = setInterval(() => {
+      if (chatIndexFlow >= chatMessagesFlow.length) {
+        clearInterval(interval);
+        return;
+      }
+      playChatNextFlow();
+    }, 1200);
+  };
+
+  window.resetChatFlow = function() {
+    chatMessagesFlow.forEach(msg => msg.style.display = 'none');
+    chatIndexFlow = 0;
+    document.getElementById('chat-progress-flow').textContent = `0 / ${chatMessagesFlow.length} messages`;
+    document.getElementById('chat-typing-flow').style.display = 'none';
+  };
+
+})();
+</script>
+
+</body>
+</html>
